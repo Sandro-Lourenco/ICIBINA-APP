@@ -1,0 +1,1 @@
+"""Courses vertical slice."""

@@ -1,0 +1,138 @@
+{
+  "task_id": "MISSION-001-BACKEND-FOUNDATION",
+  "routing_profile": "backend|database|qa|architecture",
+  "local_orchestrators": [
+    "backend-implementation-orchestrator",
+    "database-persistence-orchestrator",
+    "qa-test-orchestrator",
+    "platform-quality-gate"
+  ],
+  "external_skills_loaded": [],
+  "external_skills_considered_but_not_needed": [],
+  "commands_executed": [
+    "validated required .env keys and identities without printing secret values",
+    "verified PostgreSQL TCP and authenticated role connectivity",
+    "bootstrapped the four canonical ICIBINA roles using the existing project policy",
+    "uv 0.12.17 sync --python 3.13.15",
+    "alembic upgrade head on ICIBINA",
+    "created clean ICIBINA_test and ran alembic upgrade head",
+    "python -m compileall -q src tests migrations scripts",
+    "ruff check src tests migrations scripts",
+    "ruff format --check src tests migrations scripts",
+    "mypy",
+    "pytest",
+    "alembic current",
+    "alembic check",
+    "project architecture/database/OpenAPI/reproducibility/canonical validators",
+    "Uvicorn HTTP smoke for liveness, readiness and courses"
+  ],
+  "gates": [
+    {
+      "name": "python-compile",
+      "status": "PASS",
+      "evidence": "Python 3.13.15 compileall completed with exit code 0."
+    },
+    {
+      "name": "ruff-lint-format",
+      "status": "PASS",
+      "evidence": "All checks passed; 36 files already formatted."
+    },
+    {
+      "name": "mypy-strict",
+      "status": "PASS",
+      "evidence": "Success: no issues found in 27 source files."
+    },
+    {
+      "name": "pytest-unit-api-integration",
+      "status": "PASS",
+      "evidence": "12 tests passed against ICIBINA_test, including real readiness, repository, UoW rollback and role-boundary tests."
+    },
+    {
+      "name": "postgres-connectivity-and-roles",
+      "status": "PASS",
+      "evidence": "PostgreSQL 18.6 accepted all four canonical identities; operational roles are login-enabled and not superuser/CREATEDB/CREATEROLE."
+    },
+    {
+      "name": "alembic-clean-upgrade",
+      "status": "PASS",
+      "evidence": "Clean ICIBINA_test upgraded to 20260923_0001 (head); alembic check reported no new operations."
+    },
+    {
+      "name": "architecture-check",
+      "status": "PASS",
+      "evidence": "scripts/check_architecture.py: architecture-check: OK."
+    },
+    {
+      "name": "project-validators",
+      "status": "PASS",
+      "evidence": "Database identity, role bootstrap, canonical invariants, toolchain pins, OpenAPI contract, reproducible-release and blueprint validators passed."
+    },
+    {
+      "name": "legacy-dependency-scan",
+      "status": "PASS",
+      "evidence": "No Supabase, Stripe, Lawrence or costura references in the new backend source, tests, migrations or pyproject."
+    },
+    {
+      "name": "uvicorn-http-smoke",
+      "status": "PASS",
+      "evidence": "GET /health/live=200 ok, GET /health/ready=200 ready, GET /api/v1/courses=200."
+    },
+    {
+      "name": "git-diff-check",
+      "status": "PENDING",
+      "evidence": "The provided workspace has no .git metadata, so git diff --check cannot run."
+    }
+  ],
+  "files_changed": [
+    ".gitignore",
+    ".python-version",
+    "backend/pyproject.toml",
+    "backend/uv.lock",
+    "backend/alembic.ini",
+    "backend/migrations/**",
+    "backend/scripts/export_openapi.py",
+    "backend/openapi.json",
+    "backend/src/icibina/**",
+    "backend/tests/**",
+    "contracts/openapi/baseline.json",
+    "docs/tasks/MISSION-001-BACKEND-FOUNDATION.json"
+  ],
+  "residual_risks": [
+    "Git diff integrity cannot be checked until repository metadata is restored.",
+    "The host-global uv is 0.12.0; this mission used the project-pinned uv 0.12.17 to generate uv.lock.",
+    "Frontend and production image release locks remain deferred by the existing blueprint and are outside this backend mission."
+  ],
+  "notes": "ICIBINA and the clean ICIBINA_test both carry Alembic revision 20260923_0001. No existing database was dropped or reset.",
+  "frontend_experience": {
+    "surface_profile": "N/A",
+    "uiux_pro_max": {
+      "used": false,
+      "query": "",
+      "mode": "",
+      "dials": {
+        "variance": null,
+        "motion": null,
+        "density": null
+      },
+      "adopted_guidance": [],
+      "rejected_guidance": []
+    },
+    "twentyfirst": {
+      "used": false,
+      "searches": [],
+      "candidate_adopted": "",
+      "review": "N/A"
+    },
+    "motion": {
+      "tier": "N/A",
+      "reason": "Backend-only mission.",
+      "reduced_motion": "N/A",
+      "motionscore": "N/A"
+    },
+    "visual_qa": {
+      "viewports": [],
+      "axe": "N/A",
+      "visual_regression": "N/A"
+    }
+  }
+}

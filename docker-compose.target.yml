@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ICIBINA
+      POSTGRES_USER: icibina_owner
+      POSTGRES_PASSWORD: ${ICIBINA_OWNER_PASSWORD:-change-me-owner}
+      ICIBINA_APP_PASSWORD: ${ICIBINA_APP_PASSWORD:-change-me-app}
+      ICIBINA_MIGRATOR_PASSWORD: ${ICIBINA_MIGRATOR_PASSWORD:-change-me-migrator}
+      ICIBINA_MCP_READER_PASSWORD: ${ICIBINA_MCP_READER_PASSWORD:-change-me-reader}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/bootstrap/00_roles.sh:/docker-entrypoint-initdb.d/00_roles.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U icibina_owner -d ICIBINA"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:6379:6379"]
+
+  minio:
+    # Local development baseline. Production images must be pinned by digest.
+    image: ${MINIO_IMAGE:-minio/minio:RELEASE.2025-10-15T17-29-55Z}
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-local}
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - miniodata:/data
+
+  # Add api/worker/frontend only after real Dockerfiles exist.
+
+volumes:
+  pgdata:
+  miniodata:

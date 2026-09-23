@@ -1,0 +1,50 @@
+{
+  "task_id": "TASK-0000",
+  "routing_profile": "frontend|backend|database|qa|security|observability|payments|architecture",
+  "local_orchestrators": [],
+  "external_skills_loaded": [],
+  "external_skills_considered_but_not_needed": [],
+  "commands_executed": [],
+  "gates": [
+    {
+      "name": "example",
+      "status": "PASS|FAIL|SKIPPED|PENDING",
+      "evidence": "..."
+    }
+  ],
+  "files_changed": [],
+  "residual_risks": [],
+  "notes": "Do not claim PASS without evidence.",
+  "frontend_experience": {
+    "surface_profile": "Editorial Light|Student Immersive|Operational Light|Operational Neutral|N/A",
+    "uiux_pro_max": {
+      "used": false,
+      "query": "",
+      "mode": "",
+      "dials": {
+        "variance": null,
+        "motion": null,
+        "density": null
+      },
+      "adopted_guidance": [],
+      "rejected_guidance": []
+    },
+    "twentyfirst": {
+      "used": false,
+      "searches": [],
+      "candidate_adopted": "",
+      "review": "NOT_RUN|PASS|FAIL|N/A"
+    },
+    "motion": {
+      "tier": "0|1|2|3|N/A",
+      "reason": "",
+      "reduced_motion": "",
+      "motionscore": "N/A"
+    },
+    "visual_qa": {
+      "viewports": [],
+      "axe": "NOT_RUN|PASS|FAIL|N/A",
+      "visual_regression": "NOT_RUN|PASS|FAIL|N/A"
+    }
+  }
+}

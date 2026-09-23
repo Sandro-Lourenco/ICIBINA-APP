@@ -1,0 +1,13 @@
+services:
+  video-worker:
+    build:
+      context: .
+      dockerfile: src/workers/video_worker/Dockerfile
+    container_name: lawrence-video-worker
+    restart: always
+    env_file:
+      - ../.env
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    stop_grace_period: 30s

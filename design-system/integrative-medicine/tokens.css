@@ -1,0 +1,104 @@
+:root {
+  --bg: #F8FAF7;
+  --surface: #FFFFFF;
+  --surface-subtle: #F3F8F6;
+  --text: #12211D;
+  --text-muted: #5D6B66;
+  --border: #D9E0DD;
+  --primary: #1C6254;
+  --primary-hover: #165044;
+  --primary-subtle: #E7F1ED;
+  --accent: #B78332;
+  --accent-subtle: #F5ECDA;
+  --success: #2E7D55;
+  --success-bg: #EAF5EE;
+  --info: #276A9A;
+  --info-bg: #EAF3F9;
+  --warning: #A15C00;
+  --warning-bg: #FFF3E0;
+  --danger: #B42318;
+  --danger-bg: #FDECEA;
+  --focus: #276A9A;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 2px rgba(18,33,29,.06);
+  --shadow-md: 0 8px 24px rgba(18,33,29,.08);
+  --shadow-lg: 0 16px 40px rgba(18,33,29,.10);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+}
+
+[data-theme="dark"] {
+  --bg: #0F1715;
+  --surface: #15211E;
+  --surface-subtle: #1C2B27;
+  --text: #F5FAF7;
+  --text-muted: #B4C2BD;
+  --border: #5F756E;
+  --primary: #74C9B3;
+  --primary-hover: #9ADBC9;
+  --primary-subtle: #1B3A33;
+  --accent: #E2B76D;
+  --accent-subtle: #3B3020;
+  --success: #81C995;
+  --info: #5AA7D8;
+  --warning: #F3B562;
+  --danger: #FF8A80;
+  --focus: #5AA7D8;
+}
+
+
+/* ICIBINA Student Immersive: scoped learning experience, not global default. */
+[data-experience="student-immersive"] {
+  --bg: #071613;
+  --surface: #0D211D;
+  --surface-subtle: #14312B;
+  --text: #F5FAF7;
+  --text-muted: #B6C9C1;
+  --border: #55766C;
+  --primary: #8AD6C0;
+  --primary-hover: #A6E3D2;
+  --primary-subtle: #15372F;
+  --accent: #D9B66E;
+  --accent-subtle: #382E1D;
+  --success: #8FD2A3;
+  --info: #78BCE5;
+  --warning: #F0C071;
+  --danger: #FF9B93;
+  --focus: #78BCE5;
+
+  --motion-micro: 140ms;
+  --motion-fast: 180ms;
+  --motion-standard: 220ms;
+  --motion-panel: 300ms;
+  --motion-page: 380ms;
+  --motion-page-max: 420ms;
+  --ease-standard: cubic-bezier(.2,.8,.2,1);
+  --ease-exit: cubic-bezier(.4,0,1,1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-experience="student-immersive"] {
+    --motion-micro: 1ms;
+    --motion-fast: 1ms;
+    --motion-standard: 1ms;
+    --motion-panel: 1ms;
+    --motion-page: 1ms;
+    --motion-page-max: 1ms;
+  }
+}

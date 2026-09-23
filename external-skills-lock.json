@@ -1,0 +1,208 @@
+{
+  "schema_version": 2,
+  "reviewed_at": "2026-09-23",
+  "install_root": "CLI-native plugin bundles (Codex + Antigravity 2.0)",
+  "sources": [
+    {
+      "name": "ui-ux-pro-max",
+      "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "ref": "dcc40ff5133ef78276117db0cc34e7b83cc8aeba",
+      "source_path": ".claude/skills/ui-ux-pro-max",
+      "target_name": "ui-ux-pro-max",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "motion",
+      "repo": "motiondivision/ai-kit",
+      "ref": "1140efe9ad5e03c689ea6bb19d9d3850a4dae5f7",
+      "source_path": "plugins/motion/skills/motion",
+      "target_name": "motion",
+      "mode": "reference-only",
+      "license": "NOASSERTION",
+      "license_status": "no-license-file-detected-at-pinned-commit",
+      "redistribution": "blocked",
+      "redistribution_reason": "The pinned motiondivision/ai-kit commit does not expose a repository license file; do not vendor/redistribute the skill until upstream licensing is explicitly verified."
+    },
+    {
+      "name": "21st-cli-use",
+      "repo": "21st-dev/skill",
+      "ref": "15c7436c41dc88c54094f1be93ce53bda456b114",
+      "source_path": "skills/21st-cli-use",
+      "target_name": "21st-cli-use",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "21st-ui-explore",
+      "repo": "21st-dev/skill",
+      "ref": "15c7436c41dc88c54094f1be93ce53bda456b114",
+      "source_path": "skills/21st-ui-explore",
+      "target_name": "21st-ui-explore",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "21st-ui-build",
+      "repo": "21st-dev/skill",
+      "ref": "15c7436c41dc88c54094f1be93ce53bda456b114",
+      "source_path": "skills/21st-ui-build",
+      "target_name": "21st-ui-build",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "21st-ui-review",
+      "repo": "21st-dev/skill",
+      "ref": "15c7436c41dc88c54094f1be93ce53bda456b114",
+      "source_path": "skills/21st-ui-review",
+      "target_name": "21st-ui-review",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "react",
+      "repo": "Spardutti/claude-skills",
+      "ref": "7db37bea6d82caf577d97f66d3229fde699f6d61",
+      "source_path": "skills/react",
+      "target_name": "react",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "postgres-pro",
+      "repo": "Jeffallan/claude-skills",
+      "ref": "882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf",
+      "source_path": "skills/postgres-pro",
+      "target_name": "postgres-pro",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "sql-pro",
+      "repo": "Jeffallan/claude-skills",
+      "ref": "882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf",
+      "source_path": "skills/sql-pro",
+      "target_name": "sql-pro",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "fastapi-expert",
+      "repo": "Jeffallan/claude-skills",
+      "ref": "882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf",
+      "source_path": "skills/fastapi-expert",
+      "target_name": "fastapi-expert",
+      "mode": "manual",
+      "license": "MIT"
+    },
+    {
+      "name": "fastapi",
+      "repo": "fastapi/fastapi",
+      "ref": "50113da16fec53b66b80d75e80a89296de4fa5a5",
+      "source_path": "fastapi/.agents/skills/fastapi",
+      "target_name": "fastapi",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "test-master",
+      "repo": "Jeffallan/claude-skills",
+      "ref": "882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf",
+      "source_path": "skills/test-master",
+      "target_name": "test-master",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "playwright-expert",
+      "repo": "Jeffallan/claude-skills",
+      "ref": "882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf",
+      "source_path": "skills/playwright-expert",
+      "target_name": "playwright-expert",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "security-reviewer",
+      "repo": "Jeffallan/claude-skills",
+      "ref": "882ef55e377dbf9a4dbe496bb41ac6ccd0e555cf",
+      "source_path": "skills/security-reviewer",
+      "target_name": "security-reviewer",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "web-accessibility-web-accessibility",
+      "repo": "agents-inc/skills",
+      "ref": "3a51ef571e996b18294bf776d53dbdad26de0617",
+      "source_path": "src/skills/web-accessibility-web-accessibility",
+      "target_name": "web-accessibility-web-accessibility",
+      "mode": "default",
+      "license": "MIT"
+    },
+    {
+      "name": "opentelemetry",
+      "repo": "grafana/skills",
+      "ref": "1ccacf29049fde66637fe01ab93a83a772da323b",
+      "source_path": "skills/grafana-core/opentelemetry",
+      "target_name": "opentelemetry",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "prometheus",
+      "repo": "grafana/skills",
+      "ref": "1ccacf29049fde66637fe01ab93a83a772da323b",
+      "source_path": "skills/grafana-lgtm/prometheus",
+      "target_name": "prometheus",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "loki",
+      "repo": "grafana/skills",
+      "ref": "1ccacf29049fde66637fe01ab93a83a772da323b",
+      "source_path": "skills/grafana-lgtm/loki",
+      "target_name": "loki",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "tempo",
+      "repo": "grafana/skills",
+      "ref": "1ccacf29049fde66637fe01ab93a83a772da323b",
+      "source_path": "skills/grafana-lgtm/tempo",
+      "target_name": "tempo",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "k6",
+      "repo": "grafana/skills",
+      "ref": "1ccacf29049fde66637fe01ab93a83a772da323b",
+      "source_path": "skills/grafana-k6/k6",
+      "target_name": "k6",
+      "mode": "default",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "clean-code",
+      "repo": "btseee/clean-code-skills",
+      "ref": "5b882c1b377f81371f2d46fb728d6836a71c9e3c",
+      "source_path": "skills/clean-code",
+      "target_name": "clean-code",
+      "mode": "manual",
+      "license": "MIT"
+    },
+    {
+      "name": "software-architect",
+      "repo": "Chris-Graffagnino/software-architect",
+      "ref": "b5831ff93dbe02adfd2a7616300bc7e37e26c3d6",
+      "source_path": ".",
+      "target_name": "software-architect",
+      "mode": "manual",
+      "license": "MIT"
+    }
+  ]
+}

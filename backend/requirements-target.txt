@@ -1,0 +1,29 @@
+# Não trate esta lista como lock final: fixe versões após resolver no projeto.
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+sqlalchemy[asyncio]
+asyncpg
+alembic
+httpx
+argon2-cffi
+PyJWT
+redis
+slowapi
+structlog
+prometheus-client
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-sqlalchemy
+reportlab
+qrcode[pil]
+
+# Dev/test
+pytest
+pytest-asyncio
+pytest-cov
+ruff
+mypy
+httpx

@@ -1,0 +1,61 @@
+# Environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+.venv/
+.uv-bin/
+.uv-cache/
+.uv-python/
+uv-*.zip
+*.zip
+app.zip
+__pycache__/
+*.py[cod]
+
+# Testing / tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage/
+playwright-report/
+test-results/
+temp/
+temp_pytest_dir/
+*-uv-cache*
+
+# Build
+dist/
+build/
+
+# Logs
+*.log
+
+# Node/frontend
+node_modules/
+dist/
+.vite/
+
+# OS / IDE / editor
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+
+# Runtime/local service data
+postgres-data/
+redis-data/
+minio-data/
+
+# Agent auth/state (project rules/config remain tracked)
+.postgres-mcp/
+
+.agents/external-skills-installed.json
+artifacts/task-evidence/
+
+# Project-local runtime state / MCP profiles
+.icibina/

@@ -1,0 +1,11 @@
+# Project-scoped Codex config. Secrets are never stored here.
+[mcp_servers.icibina-postgres]
+command = "python"
+args = ["scripts/postgres-mcp-wrapper.py", "run", "--no-telemetry"]
+
+[mcp_servers.icibina-postgres.env]
+POSTGRES_MCP_DISABLE_CWD_ACCESS = "1"
+POSTGRES_MCP_LOG = "warn"
+
+[plugins."icibina-engineering@icibina-local"]
+enabled = true

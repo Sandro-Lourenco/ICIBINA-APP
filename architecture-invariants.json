@@ -1,0 +1,32 @@
+{
+  "product": "ICIBINA",
+  "database": "ICIBINA",
+  "test_database": "ICIBINA_test",
+  "roles": {
+    "owner": "icibina_owner",
+    "migrator": "icibina_migrator",
+    "app": "icibina_app",
+    "mcp": "icibina_mcp_reader"
+  },
+  "database_urls": {
+    "runtime_role": "icibina_app",
+    "migration_role": "icibina_migrator"
+  },
+  "orm": "SQLAlchemy 2 typed ORM",
+  "migration_authority": "Alembic",
+  "mcp": {
+    "server": "@microsoft/postgres-mcp@0.1.0-rc.10",
+    "wrapper": "scripts/postgres-mcp-wrapper.py",
+    "profile": "icibina-readonly",
+    "schema": "agent_inspection"
+  },
+  "antigravity_plugin_scope": ".agents/plugins/icibina-engineering",
+  "asaas_webhook": "persist inbox + outbox/job -> commit -> HTTP 2xx -> worker effects",
+  "blueprint_version": "5.8.0",
+  "release_images_lock": "release-images-lock.json",
+  "development_images_lock": "development-images-lock.json",
+  "capacity_baseline": "capacity-baseline.json",
+  "patient_data_policy": "docs/57-PATIENT-DATA-PROHIBITION-AND-PII-CONTROLS.md",
+  "frontend_bootstrap": "docs/62-SHADCN-BOOTSTRAP-AND-21ST-INTAKE.md",
+  "external_skill_license_policy": "docs/63-EXTERNAL-SKILL-LICENSE-GOVERNANCE.md"
+}

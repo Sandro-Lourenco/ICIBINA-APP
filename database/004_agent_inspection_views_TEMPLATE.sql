@@ -1,0 +1,8 @@
+-- TEMPLATE ONLY. Convert approved views to Alembic migrations after real tables exist.
+-- Goal: expose diagnostic data without exposing raw PII/secrets.
+-- Example pattern (adapt to real schema):
+-- CREATE VIEW agent_inspection.v_table_metrics AS ... pg_catalog ...;
+-- CREATE VIEW agent_inspection.v_job_health AS SELECT status, count(*) ... GROUP BY status;
+-- GRANT SELECT ON agent_inspection.v_table_metrics TO icibina_mcp_reader;
+-- GRANT SELECT ON agent_inspection.v_job_health TO icibina_mcp_reader;
+-- Never expose password hashes, refresh tokens, raw payment payloads, secrets or unnecessary PII.

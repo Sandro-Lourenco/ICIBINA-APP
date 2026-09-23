@@ -1,0 +1,96 @@
+{
+  "project": "ICIBINA",
+  "sourceOfTruth": "design-system/integrative-medicine/MASTER.md",
+  "style": [
+    "medical editorial",
+    "scientific calm",
+    "natural precision",
+    "modern academic",
+    "human warmth"
+  ],
+  "tokens": {
+    "background": "#F8FAF7",
+    "surface": "#FFFFFF",
+    "foreground": "#12211D",
+    "primary": "#1C6254",
+    "primaryHover": "#165044",
+    "accent": "#B78332",
+    "border": "#D9E0DD",
+    "muted": "#5D6B66"
+  },
+  "typography": {
+    "ui": "Inter",
+    "editorialAccent": "Source Serif 4"
+  },
+  "radius": {
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24
+  },
+  "decisions": [
+    "Evidence before ornament",
+    "Professional dignity; no infantilized gamification",
+    "Nature is an accent, never evidence of efficacy",
+    "Local components and ICIBINA tokens override external examples",
+    "ICIBINA uses four canonical surface profiles: Editorial Light, Student Immersive, Operational Light and Operational Neutral.",
+    "Student Immersive may use dark petroleum surfaces, contextual photography, editorial serif headings and controlled motion.",
+    "Motion explains state/continuity; no decorative animation competes with medical content.",
+    "21st components are candidates; local primitives and ICIBINA tokens remain authoritative."
+  ],
+  "experienceProfiles": {
+    "editorialLight": {
+      "surfaces": [
+        "public",
+        "course-detail",
+        "checkout",
+        "auth"
+      ],
+      "variance": 5,
+      "motion": 4,
+      "density": 4
+    },
+    "studentImmersive": {
+      "surfaces": [
+        "student-dashboard",
+        "lesson-player",
+        "library",
+        "learning-paths"
+      ],
+      "variance": 7,
+      "motion": 7,
+      "density": 5
+    },
+    "operationalLight": {
+      "surfaces": [
+        "teacher",
+        "course-builder"
+      ],
+      "variance": 4,
+      "motion": 3,
+      "density": 7
+    },
+    "operationalNeutral": {
+      "surfaces": [
+        "admin",
+        "operations",
+        "audit",
+        "observability"
+      ],
+      "variance": 2,
+      "motion": 2,
+      "density": 8
+    }
+  },
+  "studentImmersiveTokens": {
+    "background": "#071613",
+    "surface": "#0D211D",
+    "surfaceElevated": "#14312B",
+    "foreground": "#F5FAF7",
+    "muted": "#B6C9C1",
+    "border": "#55766C",
+    "primary": "#8AD6C0",
+    "accent": "#D9B66E",
+    "focus": "#78BCE5"
+  }
+}

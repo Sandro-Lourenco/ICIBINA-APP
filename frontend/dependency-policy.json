@@ -1,0 +1,37 @@
+{
+  "runtimeBaseline": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "viteMajor": 8,
+    "motion": "13.4.x"
+  },
+  "policy": {
+    "bootstrap": "Resolve current compatible stable packages once, review them, then commit package.json + package-lock.json.",
+    "forbiddenInRealPackageJson": [
+      "latest",
+      "*",
+      "empty version"
+    ],
+    "ci": "npm ci",
+    "upgrades": "Dependabot/Renovate or explicit reviewed PR; no invisible agent upgrade"
+  },
+  "requiredPackages": [
+    "@tanstack/react-query",
+    "react-hook-form",
+    "@hookform/resolvers",
+    "zod",
+    "lucide-react",
+    "tailwindcss",
+    "@vitejs/plugin-react",
+    "vitest",
+    "@testing-library/react",
+    "@playwright/test",
+    "@axe-core/playwright",
+    "eslint"
+  ],
+  "tooling": {
+    "shadcnCli": "4.21.0",
+    "componentsJson": "required once real frontend is initialized",
+    "intakeGate": "shadcn primitives/tokens before 21st component intake"
+  }
+}

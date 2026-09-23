@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-09-23",
+  "review_interval_days": 90,
+  "policy": "Development images are convenience dependencies only. They are reviewed on a fixed cadence and are never accepted as production/release evidence.",
+  "images": {
+    "minio": {
+      "reference": "minio/minio:RELEASE.2025-10-15T17-29-55Z",
+      "scope": "local-development-only",
+      "upstream_status": "repository archived 2026-04-25",
+      "review_by": "2026-12-22",
+      "decision": "Keep only for local S3-compatible development while evaluating a maintained alternative before production reliance."
+    },
+    "postgres": {
+      "reference": "postgres:18",
+      "scope": "local-development-only",
+      "review_by": "2026-12-22",
+      "decision": "Major tag permitted only in docker-compose development template; release uses immutable digest lock."
+    },
+    "redis": {
+      "reference": "redis:7-alpine",
+      "scope": "local-development-only",
+      "review_by": "2026-12-22",
+      "decision": "Mutable development tag only; production manifests must use immutable digest."
+    }
+  }
+}

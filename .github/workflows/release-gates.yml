@@ -1,0 +1,150 @@
+name: release-gates
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.13.15'}
+      - run: python scripts/check-release-contracts.py
+      - run: python scripts/check-reproducible-release.py
+      - run: python scripts/check-release-image-lock.py
+      - run: python scripts/check-github-actions-pins.py
+      - run: python scripts/check-toolchain-pins.py
+      - run: python scripts/check-mcp-data-boundary.py
+      - run: python scripts/check-canonical-invariants.py
+      - run: python scripts/check-release-version-consistency.py
+      - run: python scripts/check-database-role-bootstrap.py
+      - run: python scripts/check-capacity-baseline.py --strict
+      - run: python scripts/check-development-image-review.py --strict
+
+  frontend-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - id: detect
+        run: if [ -f frontend/package.json ]; then echo 'present=true' >> "$GITHUB_OUTPUT"; else echo 'present=false' >> "$GITHUB_OUTPUT"; fi
+      - if: steps.detect.outputs.present == 'true'
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with: {node-version: '24.21.0', cache: npm, cache-dependency-path: frontend/package-lock.json}
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: frontend
+        run: npm ci && npm run lint && npm run typecheck && npm run test && npm run build && npm run test:e2e && npm run test:a11y && npm run test:visual && npm run check:bundle
+      - if: steps.detect.outputs.present == 'true'
+        run: python scripts/check_frontend_architecture.py
+
+  backend-release:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae
+        env: {POSTGRES_PASSWORD: owner-release, POSTGRES_USER: icibina_owner, POSTGRES_DB: ICIBINA_release}
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U icibina_owner -d ICIBINA_release"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://icibina_app:app-release@localhost:5432/ICIBINA_release
+      DATABASE_MIGRATION_URL: postgresql+asyncpg://icibina_migrator:migrator-release@localhost:5432/ICIBINA_release
+      TEST_DATABASE_URL: postgresql+asyncpg://icibina_app:app-release@localhost:5432/ICIBINA_release_test
+      TEST_DATABASE_MIGRATION_URL: postgresql+asyncpg://icibina_migrator:migrator-release@localhost:5432/ICIBINA_release_test
+      TEST_MCP_DATABASE_URL: postgresql://icibina_mcp_reader:reader-release@localhost:5432/ICIBINA_release_test
+      APP_ENV: test
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - id: detect
+        run: if [ -f backend/pyproject.toml ]; then echo 'present=true' >> "$GITHUB_OUTPUT"; else echo 'present=false' >> "$GITHUB_OUTPUT"; fi
+      - if: steps.detect.outputs.present == 'true'
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.13.15'}
+      - if: steps.detect.outputs.present == 'true'
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7
+        with: {version: '0.12.17', enable-cache: true}
+      - if: steps.detect.outputs.present == 'true'
+        name: Bootstrap release database roles
+        env: {PGPASSWORD: owner-release}
+        run: |
+          docker run --rm --network host -e PGPASSWORD="$PGPASSWORD" postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae psql -h 127.0.0.1 -U icibina_owner -d ICIBINA_release -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE icibina_migrator LOGIN PASSWORD 'migrator-release';
+          CREATE ROLE icibina_app LOGIN PASSWORD 'app-release';
+          CREATE ROLE icibina_mcp_reader LOGIN PASSWORD 'reader-release' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+          CREATE DATABASE "ICIBINA_release_test" OWNER icibina_owner;
+          REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+          GRANT USAGE, CREATE ON SCHEMA public TO icibina_migrator;
+          GRANT USAGE ON SCHEMA public TO icibina_app;
+          CREATE SCHEMA agent_inspection AUTHORIZATION icibina_migrator;
+          REVOKE ALL ON SCHEMA agent_inspection FROM PUBLIC;
+          GRANT USAGE ON SCHEMA agent_inspection TO icibina_mcp_reader;
+          ALTER ROLE icibina_mcp_reader SET default_transaction_read_only = on;
+          ALTER DEFAULT PRIVILEGES FOR ROLE icibina_migrator IN SCHEMA public GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO icibina_app;
+          ALTER DEFAULT PRIVILEGES FOR ROLE icibina_migrator IN SCHEMA public GRANT USAGE,SELECT ON SEQUENCES TO icibina_app;
+          SQL
+          docker run --rm --network host -e PGPASSWORD="$PGPASSWORD" postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae psql -h 127.0.0.1 -U icibina_owner -d ICIBINA_release_test -v ON_ERROR_STOP=1 <<'SQL'
+          REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+          GRANT USAGE, CREATE ON SCHEMA public TO icibina_migrator;
+          GRANT USAGE ON SCHEMA public TO icibina_app;
+          CREATE SCHEMA agent_inspection AUTHORIZATION icibina_migrator;
+          REVOKE ALL ON SCHEMA public FROM icibina_mcp_reader;
+          REVOKE ALL ON SCHEMA agent_inspection FROM PUBLIC;
+          GRANT USAGE ON SCHEMA agent_inspection TO icibina_mcp_reader;
+          ALTER DEFAULT PRIVILEGES FOR ROLE icibina_migrator IN SCHEMA public GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO icibina_app;
+          ALTER DEFAULT PRIVILEGES FOR ROLE icibina_migrator IN SCHEMA public GRANT USAGE,SELECT ON SEQUENCES TO icibina_app;
+          SQL
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: backend
+        run: |
+          test -f uv.lock && test -f ../.python-version && test -f alembic.ini
+          uv sync --frozen
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy src
+          uv run alembic upgrade head
+          uv run python scripts/test_migrations.py
+          uv run pytest -q --cov=src --cov-report=term-missing --cov-fail-under=80
+          uv run pytest -q -m authz
+          uv run pytest -q -m payments_security
+          uv run python scripts/export_openapi.py --output openapi.json
+      - if: steps.detect.outputs.present == 'true'
+        run: |
+          python scripts/check_architecture.py
+          python scripts/check-openapi-contract-files.py
+          docker run --rm -v "$PWD:/repo" -w /repo tufin/oasdiff@sha256:c1200e64fa9b2229b7aee39fe389bd5b49c7cb955923f8a6b20791a6dcf1deed breaking contracts/openapi/baseline.json backend/openapi.json
+      - if: steps.detect.outputs.present == 'true'
+        name: Prove runtime role cannot perform DDL
+        env: {PGPASSWORD: app-release}
+        run: |
+          if docker run --rm --network host -e PGPASSWORD="$PGPASSWORD" postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae psql -h 127.0.0.1 -U icibina_app -d ICIBINA_release -v ON_ERROR_STOP=1 -c 'CREATE TABLE __icibina_should_fail(id int)'; then
+            echo 'ERROR: icibina_app unexpectedly has DDL privileges' >&2; exit 1
+          else
+            echo 'PASS: icibina_app DDL denied'
+          fi
+      - if: steps.detect.outputs.present == 'true'
+        name: Prove MCP least-data boundary at runtime
+        run: |
+          docker run --rm --network host -e PGPASSWORD=migrator-release postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae psql -h 127.0.0.1 -U icibina_migrator -d ICIBINA_release -v ON_ERROR_STOP=1 -c 'CREATE TABLE public.__mcp_private_canary(id int); CREATE VIEW agent_inspection.__mcp_visible_canary AS SELECT 1 AS ok; GRANT SELECT ON agent_inspection.__mcp_visible_canary TO icibina_mcp_reader;'
+          docker run --rm --network host -e PGPASSWORD=reader-release postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae psql -h 127.0.0.1 -U icibina_mcp_reader -d ICIBINA_release -v ON_ERROR_STOP=1 -c 'SELECT * FROM agent_inspection.__mcp_visible_canary;'
+          if docker run --rm --network host -e PGPASSWORD=reader-release postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae psql -h 127.0.0.1 -U icibina_mcp_reader -d ICIBINA_release -v ON_ERROR_STOP=1 -c 'SELECT * FROM public.__mcp_private_canary;'; then
+            echo 'ERROR: icibina_mcp_reader can read application schema' >&2; exit 1
+          else
+            echo 'PASS: MCP reader denied application schema'
+          fi
+          if docker run --rm --network host -e PGPASSWORD=reader-release postgres@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae psql -h 127.0.0.1 -U icibina_mcp_reader -d ICIBINA_release -v ON_ERROR_STOP=1 -c 'CREATE TABLE agent_inspection.__mcp_should_fail(id int)'; then
+            echo 'ERROR: icibina_mcp_reader unexpectedly has DDL privileges' >&2; exit 1
+          else
+            echo 'PASS: MCP reader DDL denied'
+          fi
+
+  sbom-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297
+        with: {scan-type: fs, scan-ref: ., format: cyclonedx, output: sbom.cdx.json, exit-code: '0'}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.13.15'}
+      - run: python scripts/check-sbom.py sbom.cdx.json

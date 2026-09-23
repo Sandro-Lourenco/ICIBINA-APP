@@ -1,0 +1,81 @@
+{
+  "schema_version": 4,
+  "project": "ICIBINA",
+  "routing_policy": "progressive-disclosure",
+  "lock_file": "external-skills-lock.json",
+  "project_local": [
+    ".agents/skills/frontend-experience-orchestrator/SKILL.md",
+    ".agents/skills/motion-experience-orchestrator/SKILL.md",
+    ".agents/skills/backend-implementation-orchestrator/SKILL.md",
+    ".agents/skills/database-persistence-orchestrator/SKILL.md",
+    ".agents/skills/qa-test-orchestrator/SKILL.md",
+    ".agents/skills/security-assurance-orchestrator/SKILL.md",
+    ".agents/skills/observability-performance-orchestrator/SKILL.md",
+    ".agents/skills/course-platform-architect/SKILL.md",
+    ".agents/skills/asaas-payments/SKILL.md",
+    ".agents/skills/code-quality-orchestrator/SKILL.md",
+    ".agents/skills/platform-quality-gate/SKILL.md"
+  ],
+  "external_policies": {
+    "github_skills": "fetch exact reviewed commit, build native agent plugins, install with codex/agy CLI",
+    "ui_ux_pro_max": {
+      "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "ref": "dcc40ff5133ef78276117db0cc34e7b83cc8aeba",
+      "installation": "Codex CLI plugin + Antigravity CLI plugin",
+      "activation": "new-page-redesign-ux-audit"
+    },
+    "motion_ai": {
+      "repo": "motiondivision/ai-kit",
+      "ref": "1140efe9ad5e03c689ea6bb19d9d3850a4dae5f7",
+      "installation": "Reference-only until upstream repository licensing is explicitly verifiable; not redistributed in ICIBINA bundles.",
+      "activation": "non-trivial-animation",
+      "license_status": "NOASSERTION at pinned commit; redistribution blocked",
+      "runtime_path": "Use local motion-experience-orchestrator + public Motion MCP; Motion+ opt-in."
+    },
+    "21st_cli": {
+      "version": "1.17.1",
+      "activation": "UI catalog/runtime for 21st skills"
+    },
+    "postgres_mcp": {
+      "version": "0.1.0-rc.10",
+      "profile": "icibina-readonly",
+      "access": "read-only/least-data"
+    }
+  },
+  "routing": {
+    "frontend": [
+      "react",
+      "ui-ux-pro-max",
+      "21st-*",
+      "motion-experience-orchestrator",
+      "web-accessibility-web-accessibility"
+    ],
+    "backend": [
+      "fastapi"
+    ],
+    "database": [
+      "postgres-pro",
+      "sql-pro"
+    ],
+    "qa": [
+      "test-master",
+      "playwright-expert"
+    ],
+    "security": [
+      "security-reviewer"
+    ],
+    "observability": [
+      "opentelemetry",
+      "prometheus",
+      "loki",
+      "tempo",
+      "k6"
+    ],
+    "manual": [
+      "clean-code",
+      "fastapi-expert",
+      "software-architect"
+    ]
+  },
+  "installation_policy": "Skills are installed through Codex CLI and Antigravity 2.0 CLI plugin mechanisms; .agents/skills contains project source skills only."
+}

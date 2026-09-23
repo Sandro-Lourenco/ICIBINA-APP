@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "@tanstack/react-query": "^5",
+    "react-hook-form": "RESOLVE-AND-LOCK",
+    "@hookform/resolvers": "RESOLVE-AND-LOCK",
+    "zod": "RESOLVE-AND-LOCK",
+    "motion": "^13.4.0",
+    "lucide-react": "RESOLVE-AND-LOCK"
+  },
+  "devDependencies": {
+    "vite": "^8",
+    "typescript": "RESOLVE-AND-LOCK",
+    "tailwindcss": "^4",
+    "@vitejs/plugin-react": "RESOLVE-AND-LOCK",
+    "vitest": "RESOLVE-AND-LOCK",
+    "@testing-library/react": "RESOLVE-AND-LOCK",
+    "@playwright/test": "RESOLVE-AND-LOCK",
+    "eslint": "RESOLVE-AND-LOCK"
+  },
+  "_deprecated": "Blueprint-only legacy example. Do not npm install from this file. Create the real locked package.json/package-lock.json using toolchain-lock.json, supply-chain-policy.json and docs/40-SUPPLY-CHAIN-AND-LOCKFILES.md."
+}

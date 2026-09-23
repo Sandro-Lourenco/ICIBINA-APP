@@ -1,0 +1,18 @@
+{
+  "name": "icibina-local",
+  "interface": {"displayName": "ICIBINA Local Engineering"},
+  "plugins": [
+    {
+      "name": "icibina-engineering",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/icibina-engineering"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

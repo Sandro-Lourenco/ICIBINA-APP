@@ -1,0 +1,16 @@
+{
+  "apiTransportAllowedPathFragments": [
+    "/api/",
+    "/client/",
+    "/http/",
+    "/transport/"
+  ],
+  "featurePublicEntrypoints": [
+    "index.ts",
+    "index.tsx",
+    "public.ts",
+    "public.tsx"
+  ],
+  "forbidRawFetchOutsideTransport": true,
+  "forbidCrossFeatureInternals": true
+}

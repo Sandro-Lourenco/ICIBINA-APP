@@ -1,0 +1,100 @@
+{
+  "task_id": "MISSION-001.1.1-CLOSE-PENDING-GATES",
+  "routing_profile": "security|qa",
+  "local_orchestrators": [
+    "platform-quality-gate",
+    "security-assurance-orchestrator"
+  ],
+  "external_skills_loaded": [],
+  "external_skills_considered_but_not_needed": [],
+  "commands_executed": [
+    "git ls-remote --symref https://github.com/Sandro-Lourenco/ICIBINA-APP.git HEAD",
+    "git -c http.sslBackend=openssl ls-remote --symref https://github.com/Sandro-Lourenco/ICIBINA-APP.git HEAD",
+    "gh auth status",
+    "docker run --rm --network none --read-only -v <baseline>:/data/baseline.json:ro -v <current>:/data/current.json:ro tufin/oasdiff@sha256:c1200e64fa9b2229b7aee39fe389bd5b49c7cb955923f8a6b20791a6dcf1deed breaking /data/baseline.json /data/current.json",
+    "uv run --frozen --offline python scripts/export_openapi.py --output openapi.json",
+    "backend/.venv/Scripts/python.exe scripts/check-openapi-contract-files.py"
+  ],
+  "gates": [
+    {
+      "name": "workspace_inventory",
+      "status": "PASS",
+      "evidence": "AGENTS.md, docs, scripts, .agents, .codex, .github, database, backend and frontend are present; .env presence confirmed without reading its contents."
+    },
+    {
+      "name": "working_tree_preservation",
+      "status": "PASS",
+      "evidence": "Pre-operation and post-operation SHA-256 manifests matched for all 557 relevant files; zero differences. Runtime caches were excluded."
+    },
+    {
+      "name": "git_remote_discovery",
+      "status": "PENDING",
+      "evidence": "GitHub was reached with OpenSSL, but the private repository requested authentication. gh auth status reports no authenticated GitHub hosts; no SSH key is available."
+    },
+    {
+      "name": "git_reconnection",
+      "status": "PENDING",
+      "evidence": "No .git directory was created because remote HEAD/default branch could not be verified before association. No checkout, reset, restore, clean or history rewrite was used."
+    },
+    {
+      "name": "git_diff_check_and_ignore_hygiene",
+      "status": "PENDING",
+      "evidence": "Requires a safely reconnected Git repository. The local .gitignore contains .env, .env.*, .venv, .uv-python, .uv-cache, pytest, mypy, Ruff and __pycache__ rules, but tracked-state proof is unavailable without remote history."
+    },
+    {
+      "name": "openapi_contract",
+      "status": "PASS",
+      "evidence": "OpenAPI regenerated from the backend; check-openapi-contract-files.py returned OK; backend/openapi.json and contracts/openapi/baseline.json are byte-identical (SHA-256 088D081BA2CB4C4A61C425942033B661C9885739D94E0F2F9C2010A80A6A9493); Courses 422 references #/components/schemas/ErrorBody."
+    },
+    {
+      "name": "oasdiff_breaking",
+      "status": "PASS",
+      "evidence": "Canonical tufin/oasdiff v1.30.0 image at locked digest sha256:c1200e64fa9b2229b7aee39fe389bd5b49c7cb955923f8a6b20791a6dcf1deed returned 'No changes detected' after regeneration. Only the two OpenAPI JSON files were mounted read-only and container networking was disabled."
+    },
+    {
+      "name": "github_actions",
+      "status": "PENDING",
+      "evidence": "Push, pull request and workflow dispatch require GitHub authentication that is not present in the environment. No run was fabricated or inferred."
+    }
+  ],
+  "files_changed": [
+    "docs/tasks/MISSION-001-1-1-CLOSE-PENDING-GATES.json"
+  ],
+  "residual_risks": [
+    "Remote default branch, remote HEAD SHA and tracked-sensitive-file inventory remain unverified until GitHub authentication is supplied through an interactive secure login.",
+    "Quality, security and release GitHub Actions cannot be evidenced until the branch is pushed and workflows complete."
+  ],
+  "notes": "MISSION 001.1 remains PENDING. OASDIFF is closed; Git reconnection and GitHub Actions are blocked by missing GitHub authentication. No secret was printed or persisted, and no destructive Git operation was executed.",
+  "frontend_experience": {
+    "surface_profile": "N/A",
+    "uiux_pro_max": {
+      "used": false,
+      "query": "",
+      "mode": "",
+      "dials": {
+        "variance": null,
+        "motion": null,
+        "density": null
+      },
+      "adopted_guidance": [],
+      "rejected_guidance": []
+    },
+    "twentyfirst": {
+      "used": false,
+      "searches": [],
+      "candidate_adopted": "",
+      "review": "N/A"
+    },
+    "motion": {
+      "tier": "N/A",
+      "reason": "",
+      "reduced_motion": "",
+      "motionscore": "N/A"
+    },
+    "visual_qa": {
+      "viewports": [],
+      "axe": "N/A",
+      "visual_regression": "N/A"
+    }
+  }
+}

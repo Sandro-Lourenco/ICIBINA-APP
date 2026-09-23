@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "icibina-postgres": {
+      "command": "python",
+      "args": [
+        "scripts/postgres-mcp-wrapper.py",
+        "run",
+        "--no-telemetry"
+      ],
+      "env": {
+        "POSTGRES_MCP_DISABLE_CWD_ACCESS": "1",
+        "POSTGRES_MCP_LOG": "warn"
+      }
+    }
+  }
+}

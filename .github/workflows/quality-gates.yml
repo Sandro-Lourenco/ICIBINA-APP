@@ -1,0 +1,124 @@
+name: quality-gates
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  blueprint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: {python-version: '3.13.15'}
+      - run: python scripts/validate-agent-config.py
+      - run: python scripts/validate-blueprint.py
+      - run: python scripts/validate-doc-links.py
+      - run: python scripts/check-canonical-invariants.py
+      - run: python scripts/check-release-version-consistency.py
+      - run: python scripts/check-database-role-bootstrap.py
+      - run: python scripts/check-design-tokens.py
+      - run: python scripts/check-experience-system.py
+      - run: python scripts/check-uiux-pro-max-bridge.py
+      - run: python scripts/check-shadcn-bootstrap-contract.py
+      - run: python scripts/check-database-identity.py
+      - run: python scripts/check-mcp-config.py
+      - run: python scripts/check-postgres-mcp-profile-isolation.py
+      - run: python scripts/check-21st-design-context.py
+      - run: python scripts/check-context-routing.py
+      - run: python scripts/validate-skill-evals.py
+      - run: python scripts/check-skill-policy.py
+      - run: python scripts/check_architecture.py
+      - run: python scripts/check_frontend_architecture.py
+      - run: python scripts/check-external-skills-lock.py
+      - run: python scripts/check-mcp-data-boundary.py
+      - run: python scripts/check-github-actions-pins.py
+      - run: python scripts/check-toolchain-pins.py
+      - run: python scripts/check-release-contracts.py
+      - run: python scripts/check-reproducible-release.py
+
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: owner-test
+          POSTGRES_USER: icibina_owner
+          POSTGRES_DB: ICIBINA_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U icibina_owner -d ICIBINA_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://icibina_app:app-test@localhost:5432/ICIBINA_test
+      DATABASE_MIGRATION_URL: postgresql+asyncpg://icibina_migrator:migrator-test@localhost:5432/ICIBINA_test
+      TEST_DATABASE_URL: postgresql+asyncpg://icibina_app:app-test@localhost:5432/ICIBINA_test
+      TEST_DATABASE_MIGRATION_URL: postgresql+asyncpg://icibina_migrator:migrator-test@localhost:5432/ICIBINA_test
+      TEST_MCP_DATABASE_URL: postgresql://icibina_mcp_reader:reader-test@localhost:5432/ICIBINA_test
+      APP_ENV: test
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - id: detect
+        run: if [ -f backend/pyproject.toml ]; then echo 'present=true' >> "$GITHUB_OUTPUT"; else echo 'present=false' >> "$GITHUB_OUTPUT"; fi
+      - if: steps.detect.outputs.present == 'true'
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: {python-version: '3.13.15'}
+      - if: steps.detect.outputs.present == 'true'
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with: {version: '0.12.17', enable-cache: true}
+      - if: steps.detect.outputs.present == 'true'
+        name: Bootstrap least-privilege CI roles
+        env: {PGPASSWORD: owner-test}
+        run: |
+          docker run --rm --network host -e PGPASSWORD="$PGPASSWORD" postgres:18 psql -h 127.0.0.1 -U icibina_owner -d ICIBINA_test -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE icibina_migrator LOGIN PASSWORD 'migrator-test';
+          CREATE ROLE icibina_app LOGIN PASSWORD 'app-test';
+          CREATE ROLE icibina_mcp_reader LOGIN PASSWORD 'reader-test' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+          REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+          GRANT USAGE, CREATE ON SCHEMA public TO icibina_migrator;
+          GRANT USAGE ON SCHEMA public TO icibina_app;
+          CREATE SCHEMA agent_inspection AUTHORIZATION icibina_migrator;
+          REVOKE ALL ON SCHEMA public FROM icibina_mcp_reader;
+          REVOKE ALL ON SCHEMA agent_inspection FROM PUBLIC;
+          GRANT USAGE ON SCHEMA agent_inspection TO icibina_mcp_reader;
+          ALTER ROLE icibina_mcp_reader SET default_transaction_read_only = on;
+          ALTER DEFAULT PRIVILEGES FOR ROLE icibina_migrator IN SCHEMA public GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO icibina_app;
+          ALTER DEFAULT PRIVILEGES FOR ROLE icibina_migrator IN SCHEMA public GRANT USAGE,SELECT ON SEQUENCES TO icibina_app;
+          SQL
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: backend
+        run: |
+          test -f uv.lock
+          uv sync --frozen
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy src
+          uv run python scripts/test_migrations.py
+          uv run pytest -q --cov=src --cov-report=term-missing --cov-fail-under=80
+      - if: steps.detect.outputs.present == 'true'
+        run: python scripts/check_architecture.py
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: backend
+        run: uv run pip-audit
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - id: detect
+        run: if [ -f frontend/package.json ] && [ -f frontend/package-lock.json ]; then echo 'present=true' >> "$GITHUB_OUTPUT"; else echo 'present=false' >> "$GITHUB_OUTPUT"; fi
+      - if: steps.detect.outputs.present == 'true'
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: {node-version: '24.21.0', cache: npm, cache-dependency-path: frontend/package-lock.json}
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: frontend
+        run: npm ci
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: frontend
+        run: npm run lint && npm run typecheck && npm run test && npm run build && npm run test:e2e && npm run test:a11y && npm run test:visual
+      - if: steps.detect.outputs.present == 'true'
+        run: python scripts/check_frontend_architecture.py
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high

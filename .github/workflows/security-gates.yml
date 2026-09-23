@@ -1,0 +1,53 @@
+name: security-gates
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions: {contents: read, security-events: write}
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs: {python: '${{ steps.scan.outputs.python }}', js: '${{ steps.scan.outputs.js }}'}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - id: scan
+        shell: bash
+        run: |
+          if find backend -type f -name '*.py' -print -quit 2>/dev/null | grep -q .; then echo 'python=true' >> "$GITHUB_OUTPUT"; else echo 'python=false' >> "$GITHUB_OUTPUT"; fi
+          if find frontend -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' \) -print -quit 2>/dev/null | grep -q .; then echo 'js=true' >> "$GITHUB_OUTPUT"; else echo 'js=false' >> "$GITHUB_OUTPUT"; fi
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: {fetch-depth: 0}
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env: {GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'}
+  codeql-python:
+    needs: detect
+    if: needs.detect.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: github/codeql-action/init@3ea06614dafe36dec890db3446326e0d40ce53d4
+        with: {languages: python}
+      - uses: github/codeql-action/analyze@3ea06614dafe36dec890db3446326e0d40ce53d4
+  codeql-js:
+    needs: detect
+    if: needs.detect.outputs.js == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: github/codeql-action/init@3ea06614dafe36dec890db3446326e0d40ce53d4
+        with: {languages: javascript-typescript}
+      - uses: github/codeql-action/analyze@3ea06614dafe36dec890db3446326e0d40ce53d4
+  filesystem-and-sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297
+        with: {scan-type: fs, scan-ref: ., severity: 'CRITICAL,HIGH', ignore-unfixed: true, exit-code: '1'}
+      - uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297
+        with: {scan-type: fs, scan-ref: ., format: cyclonedx, output: sbom.cdx.json, exit-code: '0'}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.13.15'}
+      - run: python scripts/check-sbom.py sbom.cdx.json

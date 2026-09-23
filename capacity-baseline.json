@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "status": "unverified",
+  "last_verified_at": null,
+  "evidence_commit": null,
+  "environment": null,
+  "metrics": {
+    "mau": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "users"
+    },
+    "peak_concurrent_sessions": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "sessions"
+    },
+    "api_rps": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "requests/second"
+    },
+    "write_rps": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "writes/second"
+    },
+    "webhook_burst": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "events/minute"
+    },
+    "jobs_throughput": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "jobs/minute"
+    },
+    "video_ingest": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "GB/day"
+    },
+    "database_size": {
+      "launch_expected": null,
+      "tested_limit": null,
+      "unit": "GB"
+    }
+  },
+  "evidence": {
+    "k6_report": null,
+    "database_metrics_snapshot": null,
+    "observability_dashboard": null,
+    "notes": null
+  }
+}

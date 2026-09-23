@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "release_requirements": {
+    "python": "exact .python-version + backend/uv.lock when backend is real",
+    "node": "exact toolchain version + frontend/package-lock.json when frontend is real",
+    "containers": "all release/production images must match release-images-lock.json and use immutable @sha256 digest",
+    "github_actions": "40-char commit SHA only",
+    "agent_skills": "exact audited commit in external-skills-lock.json + installed tree hash",
+    "mcp_packages": "explicit package version; no latest/main/master",
+    "release_image_lock": "release-images-lock.json is the canonical immutable image set for CI release gates"
+  },
+  "development_exception": "docker-compose.target.yml is local-development only and is governed by development-images-lock.json. Mutable development tags never satisfy production/release gates.",
+  "development_images": "development-images-lock.json; review <= 90 days; never production evidence"
+}
