@@ -69,9 +69,8 @@ jobs:
         with: {version: '0.12.17', enable-cache: true}
       - if: steps.detect.outputs.present == 'true'
         name: Bootstrap least-privilege CI roles
-        env: {PGPASSWORD: owner-test}
         run: |
-          docker run --rm --network host -e PGPASSWORD="$PGPASSWORD" postgres:18 psql -h 127.0.0.1 -U icibina_owner -d ICIBINA_test -v ON_ERROR_STOP=1 <<'SQL'
+          docker exec -i "${{ job.services.postgres.id }}" psql -U icibina_owner -d ICIBINA_test -v ON_ERROR_STOP=1 <<'SQL'
           CREATE ROLE icibina_migrator LOGIN PASSWORD 'migrator-test';
           CREATE ROLE icibina_app LOGIN PASSWORD 'app-test';
           CREATE ROLE icibina_mcp_reader LOGIN PASSWORD 'reader-test' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;

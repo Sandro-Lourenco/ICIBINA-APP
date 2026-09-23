@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     branches: [main]
-permissions: {contents: read, security-events: write}
+permissions: {actions: read, contents: read, security-events: write}
 jobs:
   detect:
     runs-on: ubuntu-latest

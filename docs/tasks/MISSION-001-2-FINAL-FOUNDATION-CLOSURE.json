@@ -1,0 +1,141 @@
+{
+  "task_id": "MISSION-001.2-FINAL-FOUNDATION-CLOSURE",
+  "routing_profile": "qa|security",
+  "local_orchestrators": [
+    "platform-quality-gate",
+    "security-assurance-orchestrator"
+  ],
+  "external_skills_loaded": [],
+  "external_skills_considered_but_not_needed": [],
+  "git": {
+    "existing_history_found": true,
+    "repository_root": "C:/Users/sandr/Documents/ICIBINA-app",
+    "remote": "https://github.com/Sandro-Lourenco/ICIBINA-APP.git",
+    "base_commit": "9a9748687fd062549f0f52541989051cd214b4b1",
+    "head_commit": "c6de8caef45a243afef6d98703b8e47e9e517aba",
+    "working_branch": "chore/mission-001-2-final-foundation-closure",
+    "pull_request": "https://github.com/Sandro-Lourenco/ICIBINA-APP/pull/1",
+    "commit_status": "Three commits published normally; branch tracks origin; no force-push or history rewrite was performed.",
+    "action": "Preserved the existing initial commit, quarantined ICIBINA-LEGACY-BACKEND outside the official repository, fixed two objectively proven CI wiring defects, and opened PR #1 without rewriting history."
+  },
+  "hygiene": {
+    "env_tracked": false,
+    "env_package_inclusion": false,
+    "virtualenv_tracked": false,
+    "cache_tracked": false,
+    "legacy_backend_tracked_in_current_tree": false,
+    "legacy_backend_location": "C:/Users/sandr/Documents/ICIBINA-LEGACY-BACKEND"
+  },
+  "commands_executed": [
+    "git rev-parse --show-toplevel; git status; git diff --check; git diff --cached --check",
+    "git check-ignore -v for .env, virtualenvs and caches",
+    "uv sync --frozen --offline",
+    "python -m compileall -q src tests migrations scripts test_support",
+    "ruff check .; ruff format --check .; mypy src",
+    "pytest -q --cov=src --cov-report=term-missing --cov-fail-under=80",
+    "python scripts/test_migrations.py against ICIBINA_test",
+    "alembic current; alembic heads; alembic check",
+    "pip-audit with temporary cache and CycloneDX output",
+    "project architecture, contract, role, MCP, supply-chain and OpenAPI validators",
+    "Gitleaks 8.30.1 checksum verification, directory/history/staged scans",
+    "Docker version/info and immutable oasdiff breaking check",
+    "Uvicorn HTTP smoke against ICIBINA_test"
+  ],
+  "gates": [
+    {
+      "name": "git-repository-context",
+      "status": "PASS",
+      "evidence": "Repository root is C:/Users/sandr/Documents/ICIBINA-app; origin is the official private GitHub repository; initial commit 9a97486 was discovered and preserved."
+    },
+    {
+      "name": "git-diff-check",
+      "status": "PASS",
+      "evidence": "git diff --check and git diff --cached --check exited 0."
+    },
+    {
+      "name": "git-ignore-and-package-hygiene",
+      "status": "PASS",
+      "evidence": ".env, virtualenvs, uv caches, pytest/mypy/Ruff caches and coverage are ignored; no official packaging script includes .env."
+    },
+    {
+      "name": "legacy-backend-quarantine",
+      "status": "PASS",
+      "evidence": "15,312 files (470,153,602 bytes) moved intact to C:/Users/sandr/Documents/ICIBINA-LEGACY-BACKEND; file count, byte count and sampled SHA-256 matched. Current official tree excludes it and .gitignore contains an explicit quarantine rule."
+    },
+    {
+      "name": "gitleaks-current-and-staged",
+      "status": "PASS",
+      "evidence": "Gitleaks v8.30.1 official Windows archive verified by published SHA-256 D29144DEFF3A68AA93CED33DDDF84B7FDC26070ADD4AA0F4513094C8332AFC4; staged scan and an extracted git archive of commit 9c66bb8 found zero leaks in the current official snapshot."
+    },
+    {
+      "name": "gitleaks-existing-history",
+      "status": "FAIL",
+      "evidence": "Full-history scan found 8 redacted findings, all under ICIBINA-LEGACY-BACKEND in initial commit 9a97486 (seven generic-api-key test/lost-blob findings and one Stripe test token). History rewrite was not performed."
+    },
+    {
+      "name": "python-compile-lint-format-types",
+      "status": "PASS",
+      "evidence": "compileall exited 0; Ruff check passed; 46 files already formatted; mypy reported no issues in 28 source files."
+    },
+    {
+      "name": "pytest-coverage-postgresql",
+      "status": "PASS",
+      "evidence": "19 passed including 6 PostgreSQL integration tests; total coverage 94.49%; process-only TEST_* aliases were safely derived to ICIBINA_test."
+    },
+    {
+      "name": "migration-and-alembic-drift",
+      "status": "PASS",
+      "evidence": "ICIBINA_test downgraded to base and upgraded to 20260923_0002; current/heads matched and alembic check reported no new operations."
+    },
+    {
+      "name": "role-ddl-and-mcp-boundary",
+      "status": "PASS",
+      "evidence": "Integration tests proved runtime DDL denial and MCP application-table denial; static role/MCP boundary validators also passed."
+    },
+    {
+      "name": "architecture-and-openapi",
+      "status": "PASS",
+      "evidence": "Architecture checker and OpenAPI contract checker passed; runtime validation smoke returned ErrorBody code validation_error with request_id."
+    },
+    {
+      "name": "dependency-audit-and-sbom",
+      "status": "PASS",
+      "evidence": "pip-audit reported no known vulnerabilities; CycloneDX SBOM validated with 66 components."
+    },
+    {
+      "name": "uvicorn-smoke",
+      "status": "PASS",
+      "evidence": "Against ICIBINA_test: live=200, ready=200, courses=200, invalid query=422 validation_error with request_id."
+    },
+    {
+      "name": "oasdiff-immutable-container",
+      "status": "PASS",
+      "evidence": "Docker Desktop engine 29.6.2 ran tufin/oasdiff v1.30.0 at sha256:c1200e64fa9b2229b7aee39fe389bd5b49c7cb955923f8a6b20791a6dcf1deed with network disabled and read-only OpenAPI mounts; result: No changes detected."
+    },
+    {
+      "name": "github-actions",
+      "status": "FAIL",
+      "evidence": "PR #1 quality-gates run 35929044970 passed, including backend PostgreSQL tests. Security run 35929045056 passed detect, filesystem/Trivy and SBOM, but failed Gitleaks on the legacy-only initial history. CodeQL analyzed 85/85 Python files but could not upload because GitHub code scanning is disabled for this private repository."
+    }
+  ],
+  "files_changed": [
+    ".gitignore",
+    ".github/workflows/quality-gates.yml",
+    ".github/workflows/security-gates.yml",
+    "docs/tasks/MISSION-001-2-FINAL-FOUNDATION-CLOSURE.json",
+    "ICIBINA-LEGACY-BACKEND/ (removed from current official tree and moved intact outside repository)"
+  ],
+  "residual_risks": [
+    "The already-published initial commit 9a97486 retains legacy-only Gitleaks findings in Git history. Removing them requires an explicitly authorized history rewrite and force-with-lease, which was not performed.",
+    "GitHub code scanning is disabled for the private repository, so CodeQL completed local analysis in Actions but the platform rejected the SARIF upload. Enabling that repository feature is an external repository-setting change."
+  ],
+  "final_status": "MISSION_001_FOUNDATION_BLOCKED",
+  "notes": "No secret value was printed. The production ICIBINA database was not used for destructive tests. Frontend and production container blueprint PENDING states are outside this backend foundation mission.",
+  "frontend_experience": {
+    "surface_profile": "N/A",
+    "uiux_pro_max": {"used": false, "query": "", "mode": "", "dials": {"variance": null, "motion": null, "density": null}, "adopted_guidance": [], "rejected_guidance": []},
+    "twentyfirst": {"used": false, "searches": [], "candidate_adopted": "", "review": "N/A"},
+    "motion": {"tier": "N/A", "reason": "", "reduced_motion": "", "motionscore": "N/A"},
+    "visual_qa": {"viewports": [], "axe": "N/A", "visual_regression": "N/A"}
+  }
+}
