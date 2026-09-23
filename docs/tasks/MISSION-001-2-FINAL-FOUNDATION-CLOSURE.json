@@ -12,8 +12,11 @@
     "repository_root": "C:/Users/sandr/Documents/ICIBINA-app",
     "remote": "https://github.com/Sandro-Lourenco/ICIBINA-APP.git",
     "base_commit": "9a9748687fd062549f0f52541989051cd214b4b1",
+    "head_commit": "c6de8caef45a243afef6d98703b8e47e9e517aba",
     "working_branch": "chore/mission-001-2-final-foundation-closure",
-    "action": "Preserved the existing initial commit and quarantined ICIBINA-LEGACY-BACKEND outside the official repository without rewriting history."
+    "pull_request": "https://github.com/Sandro-Lourenco/ICIBINA-APP/pull/1",
+    "commit_status": "Three commits published normally; branch tracks origin; no force-push or history rewrite was performed.",
+    "action": "Preserved the existing initial commit, quarantined ICIBINA-LEGACY-BACKEND outside the official repository, fixed two objectively proven CI wiring defects, and opened PR #1 without rewriting history."
   },
   "hygiene": {
     "env_tracked": false,
@@ -62,7 +65,7 @@
     {
       "name": "gitleaks-current-and-staged",
       "status": "PASS",
-      "evidence": "Gitleaks v8.30.1 official Windows archive verified by published SHA-256 D29144DEFF3A68AA93CED33DDDF84B7FDC26070ADD4AA0F4513094C8332AFC4; native --staged scan inspected the exact pending Git changes and found zero leaks."
+      "evidence": "Gitleaks v8.30.1 official Windows archive verified by published SHA-256 D29144DEFF3A68AA93CED33DDDF84B7FDC26070ADD4AA0F4513094C8332AFC4; staged scan and an extracted git archive of commit 9c66bb8 found zero leaks in the current official snapshot."
     },
     {
       "name": "gitleaks-existing-history",
@@ -111,18 +114,22 @@
     },
     {
       "name": "github-actions",
-      "status": "PENDING",
-      "evidence": "Pending commit, push, pull request and completed workflow runs."
+      "status": "FAIL",
+      "evidence": "PR #1 quality-gates run 35929044970 passed, including backend PostgreSQL tests. Security run 35929045056 passed detect, filesystem/Trivy and SBOM, but failed Gitleaks on the legacy-only initial history. CodeQL analyzed 85/85 Python files but could not upload because GitHub code scanning is disabled for this private repository."
     }
   ],
   "files_changed": [
     ".gitignore",
+    ".github/workflows/quality-gates.yml",
+    ".github/workflows/security-gates.yml",
     "docs/tasks/MISSION-001-2-FINAL-FOUNDATION-CLOSURE.json",
     "ICIBINA-LEGACY-BACKEND/ (removed from current official tree and moved intact outside repository)"
   ],
   "residual_risks": [
-    "The already-published initial commit 9a97486 retains legacy-only Gitleaks findings in Git history. Removing them requires an explicitly authorized history rewrite and force-with-lease, which was not performed."
+    "The already-published initial commit 9a97486 retains legacy-only Gitleaks findings in Git history. Removing them requires an explicitly authorized history rewrite and force-with-lease, which was not performed.",
+    "GitHub code scanning is disabled for the private repository, so CodeQL completed local analysis in Actions but the platform rejected the SARIF upload. Enabling that repository feature is an external repository-setting change."
   ],
+  "final_status": "MISSION_001_FOUNDATION_BLOCKED",
   "notes": "No secret value was printed. The production ICIBINA database was not used for destructive tests. Frontend and production container blueprint PENDING states are outside this backend foundation mission.",
   "frontend_experience": {
     "surface_profile": "N/A",
